@@ -1,7 +1,6 @@
-build/DS_GAME/src/main.c.o: src/main.c \
- /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/filesystem.h \
- /opt/wonderful/thirdparty/blocksds/core/libs/maxmod/include/maxmod9.h \
- /opt/wonderful/thirdparty/blocksds/core/libs/maxmod/include/mm_types.h \
+build/DS_GAME/src/chloe_render_atom.c.o: src/chloe_render_atom.c \
+ src/chloe_render_atom.h \
+ /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEMain.h \
  /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h \
  /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/bios.h \
  /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/ndstypes.h \
@@ -60,10 +59,6 @@ build/DS_GAME/src/main.c.o: src/main.c \
  /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/dsp.h \
  /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h \
  /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h \
- build/DS_GAME/maxmod/soundbank.h build/DS_GAME/gfx/blahaj.h \
- build/DS_GAME/gfx/block_pallette.h build/DS_GAME/gfx/debug.h \
- src/chloe_filesystem.h \
- /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEMain.h \
  /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NE2D.h \
  /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NETexture.h \
  /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEPalette.h \
@@ -80,9 +75,8 @@ build/DS_GAME/src/main.c.o: src/main.c \
  /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEPhysics.h \
  /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NERichText.h \
  /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEText.h
-/opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/filesystem.h:
-/opt/wonderful/thirdparty/blocksds/core/libs/maxmod/include/maxmod9.h:
-/opt/wonderful/thirdparty/blocksds/core/libs/maxmod/include/mm_types.h:
+src/chloe_render_atom.h:
+/opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEMain.h:
 /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds.h:
 /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/bios.h:
 /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/ndstypes.h:
@@ -141,12 +135,6 @@ build/DS_GAME/src/main.c.o: src/main.c \
 /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/dsp.h:
 /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/fifo.h:
 /opt/wonderful/thirdparty/blocksds/core/libs/libnds/include/nds/arm9/teak/tlf.h:
-build/DS_GAME/maxmod/soundbank.h:
-build/DS_GAME/gfx/blahaj.h:
-build/DS_GAME/gfx/block_pallette.h:
-build/DS_GAME/gfx/debug.h:
-src/chloe_filesystem.h:
-/opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEMain.h:
 /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NE2D.h:
 /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NETexture.h:
 /opt/wonderful/thirdparty/blocksds/external/nitro-engine/include/NEPalette.h:

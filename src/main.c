@@ -1,6 +1,10 @@
-// SPDX-License-Identifier: CC0-1.0
-//
-// SPDX-FileContributor: Antonio Niño Díaz, 2023
+////////////////
+// DEBUG MODE //
+////////////////
+#define CHLOE_DEBUG_ASK_BEFORE_CHANGING
+//Long story Short
+//This make the Code for debug mode not even included in the game, so s p e e d
+
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -14,7 +18,10 @@
 //Assets
 #include "soundbank.h"
 #include "blahaj.h"
+#include "block_pallette.h"
+#ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
 #include "debug.h"
+#endif
 
 //System Librarys
 #include "chloe_filesystem.h"
@@ -23,20 +30,11 @@
 #include <nds/arm9/videoGL.h>
 #include <nds/arm9/background.h>
 
-////////////////
-// DEBUG MODE //
-////////////////
-#define CHLOE_DEBUG_ASK_BEFORE_CHANGING
-//Long story Short
-//This make the Code for debug mode not even included in the game, so s p e e d
-
 
 typedef struct {
     NE_Camera *Camera;
     NE_Model *Model;
-    #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
-        NE_Material *Debug_Material;
-    #endif
+    NE_Material *Block_Pallate;
 
     //Game State
     unsigned int frame_step;
@@ -49,6 +47,7 @@ void Update3DScene(uint16_t keys,void *arg){
     float swim_state = sinLerp(Scene->frame_step * 300) >> 7;
     float detail_state = sinLerp(Scene->frame_step * 450) >> 6; // Bit shift for FAST Dividing because this is a old little system 
     NE_ModelSetRot(Scene->Model,0, detail_state/18 ,(int)swim_state);
+    NE_ViewRotate(Scene->frame_step,0,0);
 
 }
 
@@ -58,7 +57,27 @@ void Draw3DScene(void *arg)
 
     NE_ClearColorSet(RGB15(1,5,16),1,0);
     NE_CameraUse(Scene->Camera);
+    NE_PolyFormat(31,1,NE_LIGHT_0,NE_CULL_BACK,0);
     NE_ModelDraw(Scene->Model);
+
+    NE_MaterialUse(Scene->Block_Pallate);
+    int block_uv_x = 0;
+    int block_uv_y = 1;
+    block_uv_x = block_uv_x * 16; // dont make a new varuable to save on bytes
+    block_uv_y = block_uv_y * 16; // dont make a new varuable to save on bytes
+    NE_PolyBegin(GL_QUAD);
+
+        NE_PolyTexCoord(0 + block_uv_x, 0 + block_uv_y);   // Texture coordinates
+        NE_PolyVertex(-1, 1, 0); // Send new vertex
+        NE_PolyTexCoord(0 + block_uv_x, 16 +  block_uv_y);
+        NE_PolyVertex(-1, -1, 0);
+        NE_PolyTexCoord(16 + block_uv_x, 16 +  block_uv_y);
+        NE_PolyVertex(1, -1, 0);
+        NE_PolyTexCoord(16  + block_uv_x, 0 +  block_uv_y);
+        NE_PolyVertex(1, 1, 0);
+
+    NE_PolyEnd();
+    
 }
 
 void Init3DScene(void *arg){
@@ -68,23 +87,19 @@ void Init3DScene(void *arg){
     Scene->Model = NE_ModelCreate(NE_Static);
     Scene->Camera = NE_CameraCreate();
     Scene->frame_step = 0;
-    NE_Material *Material = NE_MaterialCreate();
+    NE_Material *Blahaj_Material = NE_MaterialCreate();
     NE_CameraSet(Scene->Camera,
-                  -5, 0, 0,
+                  -2, 2, 2,
                   0, 0, 0,
                   0, 1, 0);
-
-    #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
-        NE_Material *DebugMaterial = NE_MaterialCreate();
-        NE_MaterialTexLoad(DebugMaterial, NE_RGB5, 8,8, NE_TEXGEN_TEXCOORD | NE_TEXTURE_WRAP_S | NE_TEXTURE_WRAP_T,debugBitmap);
-        Scene->Debug_Material = DebugMaterial;
-    #endif
-    
+    NE_Material *BlockPallette = NE_MaterialCreate();
+    NE_MaterialTexLoad(BlockPallette, NE_RGB5, 256,256, NE_TEXGEN_TEXCOORD,block_palletteBitmap);
+    Scene->Block_Pallate = BlockPallette;
 
     NE_ModelLoadStaticMeshFAT(Scene->Model, "blahaj_model.bin");
-    NE_MaterialTexLoad(Material, NE_RGB5, 256, 256, NE_TEXGEN_TEXCOORD,blahajBitmap);
+    NE_MaterialTexLoad(Blahaj_Material, NE_RGB5, 256, 256, NE_TEXGEN_TEXCOORD,blahajBitmap);
     
-    NE_ModelSetMaterial(Scene->Model, Material);
+    NE_ModelSetMaterial(Scene->Model, Blahaj_Material);
     NE_ModelSetCoord(Scene->Model,0,0,0);
     NE_LightSet(0, NE_White, -0.5, -0.5, -0.5);
 
@@ -147,7 +162,7 @@ int main(int argc, char **argv)
         #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
             printf("\x1B[2J\x1B[H");
             printf("==Debug Menu==\n");
-            printf("Frame %d/%d\n",Scene.frame_step,4228250625);
+            printf("Frame %d/%u\n",Scene.frame_step,~0);
             printf("FPS: %d\n",current_fps);
             //printf("Frame Buffer Overflow %d",sizeof(int));
             fpscount++;
