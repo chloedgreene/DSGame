@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Nintendo",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/wonderful/toolchain/gcc-arm-none-eabi/include/",
+                "/opt/blocksds/core/libs/libnds/include/**",
+                "/opt/blocksds/core/libs/dswifi/include/**",
+                "/opt/blocksds/core/libs/maxmod/include/**",
+                "/opt/blocksds/core/libs/libxm7/include/**",
+                "/opt/blocksds/external/nitro-engine/include/**",
+                "${workspaceFolder}/build/DS_GAME/maxmod/**",
+                "${workspaceFolder}/build/DS_GAME/gfx/**"
+            ],
+            "defines": [],
+            "compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}

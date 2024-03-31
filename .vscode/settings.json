@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "stdbool.h": "c",
+        "*.old": "c",
+        "stdio.h": "c",
+        "background.h": "c",
+        "video.h": "c",
+        "nemain.h": "c",
+        "videogl.h": "c",
+        "time.h": "c",
+        "soundbank_bin.h": "c",
+        "soundbank.h": "c"
+    }
+}
