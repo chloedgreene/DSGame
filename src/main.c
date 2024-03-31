@@ -14,6 +14,7 @@
 //Assets
 #include "soundbank.h"
 #include "blahaj.h"
+#include "debug.h"
 
 //System Librarys
 #include "chloe_filesystem.h"
@@ -33,17 +34,20 @@
 typedef struct {
     NE_Camera *Camera;
     NE_Model *Model;
+    #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
+        NE_Material *Debug_Material;
+    #endif
 
     //Game State
-    int frame_step;
+    unsigned int frame_step;
 } SceneData;
 
 void Update3DScene(uint16_t keys,void *arg){
 
     SceneData *Scene = arg;
     Scene->frame_step++;
-    float swim_state = sinLerp(Scene->frame_step * 300) / 150;
-    float detail_state = sinLerp(Scene->frame_step * 450) >> 6;
+    float swim_state = sinLerp(Scene->frame_step * 300) >> 7;
+    float detail_state = sinLerp(Scene->frame_step * 450) >> 6; // Bit shift for FAST Dividing because this is a old little system 
     NE_ModelSetRot(Scene->Model,0, detail_state/18 ,(int)swim_state);
 
 }
@@ -69,8 +73,17 @@ void Init3DScene(void *arg){
                   -5, 0, 0,
                   0, 0, 0,
                   0, 1, 0);
+
+    #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
+        NE_Material *DebugMaterial = NE_MaterialCreate();
+        NE_MaterialTexLoad(DebugMaterial, NE_RGB5, 8,8, NE_TEXGEN_TEXCOORD | NE_TEXTURE_WRAP_S | NE_TEXTURE_WRAP_T,debugBitmap);
+        Scene->Debug_Material = DebugMaterial;
+    #endif
+    
+
     NE_ModelLoadStaticMeshFAT(Scene->Model, "blahaj_model.bin");
     NE_MaterialTexLoad(Material, NE_RGB5, 256, 256, NE_TEXGEN_TEXCOORD,blahajBitmap);
+    
     NE_ModelSetMaterial(Scene->Model, Material);
     NE_ModelSetCoord(Scene->Model,0,0,0);
     NE_LightSet(0, NE_White, -0.5, -0.5, -0.5);
@@ -134,9 +147,9 @@ int main(int argc, char **argv)
         #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
             printf("\x1B[2J\x1B[H");
             printf("==Debug Menu==\n");
-            printf("Frame %d\n",Scene.frame_step);
+            printf("Frame %d/%d\n",Scene.frame_step,4228250625);
             printf("FPS: %d\n",current_fps);
-            printf("Frame Buffer Overflow %d",sizeof(int));
+            //printf("Frame Buffer Overflow %d",sizeof(int));
             fpscount++;
         #endif
     }

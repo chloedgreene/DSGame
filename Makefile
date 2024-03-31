@@ -35,7 +35,7 @@ SDIMAGE		:= image.bin
 # -----------------
 
 SOURCEDIRS	:= src
-INCLUDEDIRS	:=
+INCLUDEDIRS	:= 
 GFXDIRS		:= gfx
 BINDIRS		:= # data
 AUDIODIRS	:= audio

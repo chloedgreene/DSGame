@@ -1,12 +1,12 @@
 
-//{{BLOCK(blahaj)
+//{{BLOCK(debug)
 
 //======================================================================
 //
-//	blahaj, 256x256@16, 
+//	debug, 8x8@16, 
 //	Alphabit on.
 //	+ bitmap not compressed
-//	Total size: 131072 = 131072
+//	Total size: 128 = 128
 //
 //	Time-stamp: 2024-03-31, 16:24:25
 //	Exported by Cearn's GBA Image Transmogrifier, v0.9.2
@@ -14,12 +14,12 @@
 //
 //======================================================================
 
-#ifndef GRIT_BLAHAJ_H
-#define GRIT_BLAHAJ_H
+#ifndef GRIT_DEBUG_H
+#define GRIT_DEBUG_H
 
-#define blahajBitmapLen 131072
-extern const unsigned int blahajBitmap[32768];
+#define debugBitmapLen 128
+extern const unsigned int debugBitmap[32];
 
-#endif // GRIT_BLAHAJ_H
+#endif // GRIT_DEBUG_H
 
-//}}BLOCK(blahaj)
+//}}BLOCK(debug)

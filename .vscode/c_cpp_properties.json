@@ -11,7 +11,8 @@
                 "/opt/blocksds/core/libs/libxm7/include/**",
                 "/opt/blocksds/external/nitro-engine/include/**",
                 "${workspaceFolder}/build/DS_GAME/maxmod/**",
-                "${workspaceFolder}/build/DS_GAME/gfx/**"
+                "${workspaceFolder}/build/DS_GAME/gfx/**",
+                "${workspaceFolder}/src/libmap/h"
             ],
             "defines": [],
             "compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
