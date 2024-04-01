@@ -35,8 +35,8 @@ SDIMAGE		:= image.bin
 # Source code paths
 # -----------------
 
-SOURCEDIRS	:= src libmap
-INCLUDEDIRS	:= libmap
+SOURCEDIRS	:= src
+INCLUDEDIRS	:= 
 GFXDIRS		:= gfx
 BINDIRS		:= # data
 AUDIODIRS	:= audio
