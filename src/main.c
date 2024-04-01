@@ -34,7 +34,6 @@
 typedef struct {
     NE_Camera *Camera;
     NE_Model *Model;
-    NE_Material *Block_Pallate;
 
     //Game State
     unsigned int frame_step;
@@ -60,23 +59,6 @@ void Draw3DScene(void *arg)
     NE_PolyFormat(31,1,NE_LIGHT_0,NE_CULL_BACK,0);
     NE_ModelDraw(Scene->Model);
 
-    NE_MaterialUse(Scene->Block_Pallate);
-    int block_uv_x = 0;
-    int block_uv_y = 1;
-    block_uv_x = block_uv_x * 16; // dont make a new varuable to save on bytes
-    block_uv_y = block_uv_y * 16; // dont make a new varuable to save on bytes
-    NE_PolyBegin(GL_QUAD);
-
-        NE_PolyTexCoord(0 + block_uv_x, 0 + block_uv_y);   // Texture coordinates
-        NE_PolyVertex(-1, 1, 0); // Send new vertex
-        NE_PolyTexCoord(0 + block_uv_x, 16 +  block_uv_y);
-        NE_PolyVertex(-1, -1, 0);
-        NE_PolyTexCoord(16 + block_uv_x, 16 +  block_uv_y);
-        NE_PolyVertex(1, -1, 0);
-        NE_PolyTexCoord(16  + block_uv_x, 0 +  block_uv_y);
-        NE_PolyVertex(1, 1, 0);
-
-    NE_PolyEnd();
     
 }
 
@@ -92,9 +74,6 @@ void Init3DScene(void *arg){
                   -2, 2, 2,
                   0, 0, 0,
                   0, 1, 0);
-    NE_Material *BlockPallette = NE_MaterialCreate();
-    NE_MaterialTexLoad(BlockPallette, NE_RGB5, 256,256, NE_TEXGEN_TEXCOORD,block_palletteBitmap);
-    Scene->Block_Pallate = BlockPallette;
 
     NE_ModelLoadStaticMeshFAT(Scene->Model, "blahaj_model.bin");
     NE_MaterialTexLoad(Blahaj_Material, NE_RGB5, 256, 256, NE_TEXGEN_TEXCOORD,blahajBitmap);
