@@ -8,6 +8,7 @@ export BLOCKSDSEXT		?= /opt/blocksds/external
 export WONDERFUL_TOOLCHAIN	?= /opt/wonderful
 ARM_NONE_EABI_PATH	?= $(WONDERFUL_TOOLCHAIN)/toolchain/gcc-arm-none-eabi/bin/
 
+GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
 # Dev Config
 # ==========
 EMULATOR := melonDS
@@ -34,8 +35,8 @@ SDIMAGE		:= image.bin
 # Source code paths
 # -----------------
 
-SOURCEDIRS	:= src
-INCLUDEDIRS	:= 
+SOURCEDIRS	:= src libmap
+INCLUDEDIRS	:= libmap
 GFXDIRS		:= gfx
 BINDIRS		:= # data
 AUDIODIRS	:= audio
@@ -45,7 +46,7 @@ NITROFSDIR	:= ntrfs
 # Defines passed to all files
 # ---------------------------
 
-DEFINES		:=
+DEFINES		:= -DVERSION=\"$(GIT_VERSION)\"
 
 # Libraries
 # ---------

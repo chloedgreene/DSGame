@@ -7,7 +7,9 @@
 
 
 #include <stdbool.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include <filesystem.h>
 #include <maxmod9.h>
@@ -25,6 +27,12 @@
 
 //System Librarys
 #include "chloe_filesystem.h"
+#include "chloe_libmap_fix.h"
+#include "chloe_render_atom.h"
+#include "map_data.h"
+#include "map_parser.h"
+#include "geo_generator.h"
+#include "surface_gatherer.h"
 
 #include <nds/arm9/video.h>
 #include <nds/arm9/videoGL.h>
@@ -34,6 +42,8 @@
 typedef struct {
     NE_Camera *Camera;
     NE_Model *Model;
+    AtomModel *surfaces;  // Array of surfaces
+    int surface_count;
 
     //Game State
     unsigned int frame_step;
@@ -47,19 +57,38 @@ void Update3DScene(uint16_t keys,void *arg){
     float detail_state = sinLerp(Scene->frame_step * 450) >> 6; // Bit shift for FAST Dividing because this is a old little system 
     NE_ModelSetRot(Scene->Model,0, detail_state/18 ,(int)swim_state);
     NE_ViewRotate(Scene->frame_step,0,0);
+    float RotateX = sinLerp(Scene->frame_step * 300) >> 8;
+    float RotateY = cosLerp(Scene->frame_step * 300) >> 8;
+
+    NE_CameraSet(Scene->Camera,
+                  RotateX,0,RotateY,
+                  0, 0, 0,
+                  0, 1, 0);
 
 }
 
 void Draw3DScene(void *arg)
 {
     SceneData *Scene = arg;
-
     NE_ClearColorSet(RGB15(1,5,16),1,0);
     NE_CameraUse(Scene->Camera);
     NE_PolyFormat(31,1,NE_LIGHT_0,NE_CULL_BACK,0);
     NE_ModelDraw(Scene->Model);
 
-    
+    for (int s = 0; s < Scene->surface_count; ++s) {
+        AtomModel *surf = &Scene->surfaces[s];
+        NE_PolyBegin(GL_TRIANGLE_STRIP); // Adjust this based on your requirement
+        
+            for (int v = 0; v < surf->vertex_count; v += 3) {
+            // Draw each vertex of the triangle
+                NE_PolyVertex(surf->arr[v+2].x, surf->arr[v+2].y, surf->arr[v+2].z);
+                NE_PolyVertex(surf->arr[v+1].x, surf->arr[v+1].y, surf->arr[v+1].z);
+                NE_PolyVertex(surf->arr[v].x,   surf->arr[v].y,   surf->arr[v].z);
+            }
+        
+        NE_PolyEnd();
+    }
+
 }
 
 void Init3DScene(void *arg){
@@ -69,11 +98,44 @@ void Init3DScene(void *arg){
     Scene->Model = NE_ModelCreate(NE_Static);
     Scene->Camera = NE_CameraCreate();
     Scene->frame_step = 0;
+    // Scene->arr = (AtomModel *)malloc(256 * sizeof(AtomModel)); // Alloc Vertices for map
+    // assert(Scene->arr != NULL);
     NE_Material *Blahaj_Material = NE_MaterialCreate();
     NE_CameraSet(Scene->Camera,
-                  -2, 2, 2,
+                  16,16,16,
                   0, 0, 0,
                   0, 1, 0);
+
+    printf("Loading Map...\n");
+    map_parser_load("nitro:/maps/debug.map");
+    printf("Generating Mesh...\n");
+    geo_generator_run();
+    printf("Surface Gather...\n");
+    surface_gatherer_reset_params();
+    surface_gatherer_set_split_type(SST_BRUSH);
+    surface_gatherer_run();
+    
+    const surfaces *surfs = surface_gatherer_fetch();
+    Scene->surface_count = surfs->surface_count;
+    Scene->surfaces = malloc(Scene->surface_count * sizeof(AtomModel));
+    assert(Scene->surfaces != NULL);
+    printf("We have %d Surfaces\n",surfs->surface_count);
+    for (int s = 0; s < surfs->surface_count; ++s) // Loop the Surfaces
+	{
+        surface *surf = &surfs->surfaces[s];// Get the Surface
+        AtomModel *surfd = &Scene->surfaces[s];
+        surfd->arr = malloc(surf->vertex_count * sizeof(AtomVertex));
+        surfd->vertex_count = surf->vertex_count;
+        printf("We have %d Vertexs in surface %d\n",surf->vertex_count,s);
+        for (int v = 0; v < surf->vertex_count; ++v)
+		{
+            surfd->arr[v].x = surf->vertices[v].vertex.x;
+            surfd->arr[v].y = surf->vertices[v].vertex.y;
+            surfd->arr[v].z = surf->vertices[v].vertex.z;
+            
+        }
+    }
+
 
     NE_ModelLoadStaticMeshFAT(Scene->Model, "blahaj_model.bin");
     NE_MaterialTexLoad(Blahaj_Material, NE_RGB5, 256, 256, NE_TEXGEN_TEXCOORD,blahajBitmap);
@@ -98,9 +160,9 @@ int main(int argc, char **argv)
     irqSet(IRQ_HBLANK, NE_HBLFunc);
 
     mmInitDefault("nitro:/soundbank.bin");
-    mmLoad(MOD_ROLLINGDOWNTHESTREET);
+    mmLoad(MOD_SPACE_DEBRIS);
     soundEnable();
-    mmStart(MOD_ROLLINGDOWNTHESTREET, MM_PLAY_LOOP);
+    mmStart(MOD_SPACE_DEBRIS, MM_PLAY_LOOP);
 
 
     SceneData Scene = { 0 };
@@ -140,10 +202,10 @@ int main(int argc, char **argv)
 
         #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
             printf("\x1B[2J\x1B[H");
-            printf("==Debug Menu==\n");
+            printf("==Debug Menu %s==\n",VERSION);
             printf("Frame %d/%u\n",Scene.frame_step,~0);
             printf("FPS: %d\n",current_fps);
-            //printf("Frame Buffer Overflow %d",sizeof(int));
+            printf("Surface Count:%d\n",Scene.surface_count);
             fpscount++;
         #endif
     }

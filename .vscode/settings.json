@@ -9,6 +9,8 @@
         "videogl.h": "c",
         "time.h": "c",
         "soundbank_bin.h": "c",
-        "soundbank.h": "c"
+        "soundbank.h": "c",
+        "stdlib.h": "c",
+        "map_parser.h": "c"
     }
 }

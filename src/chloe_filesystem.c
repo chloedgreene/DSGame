@@ -11,8 +11,6 @@ void WaitForNitro(){
         {
             swiWaitForVBlank();
             uint16_t keys = keysDown();
-            if (keys & KEY_START)
-                return 0;
         }
     }
     
