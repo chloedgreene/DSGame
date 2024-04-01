@@ -77,18 +77,75 @@ void Draw3DScene(void *arg)
 
     for (int s = 0; s < Scene->surface_count; ++s) {
         AtomModel *surf = &Scene->surfaces[s];
-        NE_PolyBegin(GL_TRIANGLE_STRIP); // Adjust this based on your requirement
+        NE_PolyBegin(GL_QUAD_STRIP); // Adjust this based on your requirement
         
-            for (int v = 0; v < surf->vertex_count; v += 3) {
+            for (int v = 0; v < surf->vertex_count; v ++) {
             // Draw each vertex of the triangle
-                NE_PolyVertex(surf->arr[v+2].x, surf->arr[v+2].y, surf->arr[v+2].z);
-                NE_PolyVertex(surf->arr[v+1].x, surf->arr[v+1].y, surf->arr[v+1].z);
                 NE_PolyVertex(surf->arr[v].x,   surf->arr[v].y,   surf->arr[v].z);
             }
         
         NE_PolyEnd();
     }
 
+}
+
+// Define a hash function for vertices
+uint32_t hashVertex(const AtomVertex *v) {
+    // Combine the coordinates to create a unique hash value
+    uint32_t hash = 0;
+    hash ^= v->x + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+    hash ^= v->y + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+    hash ^= v->z + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+    return hash;
+}
+
+// Define a function to compare vertices for equality
+bool equalVertices(const AtomVertex *v1, const AtomVertex *v2) {
+    return v1->x == v2->x && v1->y == v2->y && v1->z == v2->z;
+}
+
+// Structure to represent a hash set
+typedef struct HashSet {
+    AtomVertex *keys;
+    bool *filled;
+    int capacity;
+} HashSet;
+
+// Initialize a hash set
+HashSet initHashSet(int capacity) {
+    HashSet set;
+    set.keys = malloc(capacity * sizeof(AtomVertex));
+    set.filled = calloc(capacity, sizeof(bool));
+    set.capacity = capacity;
+    return set;
+}
+
+// Insert a vertex into the hash set
+void insertIntoHashSet(HashSet *set, const AtomVertex *v) {
+    uint32_t hash = hashVertex(v) % set->capacity;
+    while (set->filled[hash]) {
+        hash = (hash + 1) % set->capacity;
+    }
+    set->keys[hash] = *v;
+    set->filled[hash] = true;
+}
+
+// Check if a vertex exists in the hash set
+bool existsInHashSet(const HashSet *set, const AtomVertex *v) {
+    uint32_t hash = hashVertex(v) % set->capacity;
+    while (set->filled[hash]) {
+        if (equalVertices(v, &set->keys[hash])) {
+            return true;
+        }
+        hash = (hash + 1) % set->capacity;
+    }
+    return false;
+}
+
+// Free memory allocated for the hash set
+void freeHashSet(HashSet *set) {
+    free(set->keys);
+    free(set->filled);
 }
 
 void Init3DScene(void *arg){
@@ -126,14 +183,20 @@ void Init3DScene(void *arg){
         AtomModel *surfd = &Scene->surfaces[s];
         surfd->arr = malloc(surf->vertex_count * sizeof(AtomVertex));
         surfd->vertex_count = surf->vertex_count;
-        printf("We have %d Vertexs in surface %d\n",surf->vertex_count,s);
+        HashSet vertexSet = initHashSet(surf->vertex_count);
+        printf("\n\n");
         for (int v = 0; v < surf->vertex_count; ++v)
 		{
-            surfd->arr[v].x = surf->vertices[v].vertex.x;
-            surfd->arr[v].y = surf->vertices[v].vertex.y;
-            surfd->arr[v].z = surf->vertices[v].vertex.z;
+            if (!existsInHashSet(&vertexSet, &surf->vertices[v].vertex)) {
+                surfd->arr[v].x = surf->vertices[v].vertex.x;
+                surfd->arr[v].y = surf->vertices[v].vertex.y;
+                surfd->arr[v].z = surf->vertices[v].vertex.z;
+                insertIntoHashSet(&vertexSet, &surf->vertices[v].vertex);
+            }
+            printf("%f,%f,%f\n",surf->vertices[v].vertex.x,surf->vertices[v].vertex.y,surf->vertices[v].vertex.z);
             
         }
+        freeHashSet(&vertexSet);
     }
 
 
@@ -201,11 +264,11 @@ int main(int argc, char **argv)
 
 
         #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
-            printf("\x1B[2J\x1B[H");
-            printf("==Debug Menu %s==\n",VERSION);
-            printf("Frame %d/%u\n",Scene.frame_step,~0);
-            printf("FPS: %d\n",current_fps);
-            printf("Surface Count:%d\n",Scene.surface_count);
+            //printf("\x1B[2J\x1B[H");
+            //printf("==Debug Menu %s==\n",VERSION);
+            //printf("Frame %d/%u\n",Scene.frame_step,~0);
+            //printf("FPS: %d\n",current_fps);
+            //printf("Surface Count:%d\n",Scene.surface_count);
             fpscount++;
         #endif
     }
