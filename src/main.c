@@ -77,7 +77,7 @@ void Draw3DScene(void *arg)
 
     for (int s = 0; s < Scene->surface_count; ++s) {
         AtomModel *surf = &Scene->surfaces[s];
-        NE_PolyBegin(GL_QUAD_STRIP); // Adjust this based on your requirement
+        NE_PolyBegin(GL_TRIANGLE_STRIP); // Adjust this based on your requirement
         
             for (int v = 0; v < surf->vertex_count; v ++) {
             // Draw each vertex of the triangle
