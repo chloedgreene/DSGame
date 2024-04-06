@@ -65,8 +65,6 @@ void Draw3DScene(void *arg)
     NE_ClearColorSet(RGB15(0,4,15),1,0);
     NE_CameraUse(Scene->Camera);
     NE_PolyFormat(31,1,NE_LIGHT_0,NE_CULL_BACK,0);
-
-
     NE_ModelDraw(Scene->Model);
 
 
