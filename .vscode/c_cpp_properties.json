@@ -12,9 +12,10 @@
                 "/opt/blocksds/external/nitro-engine/include/**",
                 "${workspaceFolder}/build/DS_GAME/maxmod/**",
                 "${workspaceFolder}/build/DS_GAME/gfx/**",
-                "${workspaceFolder}/src/libmap/h"
             ],
-            "defines": [],
+            "defines": [
+                "VERSION"
+            ],
             "compilerPath": "/opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
             "cStandard": "c17",
             "cppStandard": "gnu++17",

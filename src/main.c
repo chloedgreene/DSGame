@@ -36,7 +36,7 @@
 
 typedef struct {
     NE_Camera *Camera;
-    NE_Model *Model[NUM_ENTITYS];
+    NE_Model *Model;
 
     //Game State
     unsigned int frame_step;
@@ -46,26 +46,17 @@ void Update3DScene(uint16_t keys,void *arg){
 
     SceneData *Scene = arg;
     Scene->frame_step++;
-    float swim_state = sinLerp(Scene->frame_step * 300) >> 7;
-    float detail_state = sinLerp(Scene->frame_step * 450) >> 6; // Bit shift for FAST Dividing because this is a old little system 
-    NE_ModelSetRot(Scene->Model[0],0, detail_state/18 ,(int)swim_state);
-    NE_ViewRotate(Scene->frame_step,0,0);
-
-
-    NE_CameraSet(Scene->Camera,
-                  -3, 0,3,
-                  0, 0, 0,
-                  0, 1, 0);
 
 }
 
 void Draw3DScene(void *arg)
 {
     SceneData *Scene = arg;
-    NE_ClearColorSet(RGB15(0,4,15),1,0);
+    NE_ClearColorSet(RGB15(4,0,0),1,0);
     NE_CameraUse(Scene->Camera);
-    NE_PolyFormat(31,1,NE_LIGHT_0,NE_CULL_BACK,0);
-    NE_ModelDraw(Scene->Model[0]);
+    NE_PolyFormat(31,1,NE_LIGHT_ALL,NE_CULL_BACK,0);
+    
+    NE_ModelDraw(Scene->Model);
 
 
 
@@ -76,22 +67,21 @@ void Init3DScene(void *arg){
 
     SceneData *Scene = arg;
 
-    Scene->Model[0] = NE_ModelCreate(NE_Static);
+    Scene->Model = NE_ModelCreate(NE_Static);
     Scene->Camera = NE_CameraCreate();
     Scene->frame_step = 0;
-    // Scene->arr = (AtomModel *)malloc(256 * sizeof(AtomModel)); // Alloc Vertices for map
-    // assert(Scene->arr != NULL);
+
     NE_Material *Blahaj_Material = NE_MaterialCreate();
     NE_CameraSet(Scene->Camera,
-                  16,16,16,
-                  0, 0, 0,
+                  2, 1, 0,
+                  0, 0.5, 0,
                   0, 1, 0);
 
-    NE_ModelLoadStaticMeshFAT(Scene->Model[0], "blahaj_model.bin");
-    NE_MaterialTexLoad(Blahaj_Material, NE_RGB5, 256, 256, NE_TEXGEN_TEXCOORD,blahajBitmap);
+    NE_ModelLoadStaticMeshFAT(Scene->Model, "iron_lung.bin");
+    NE_MaterialTexLoad(Blahaj_Material, NE_RGB5, 8, 8, NE_TEXGEN_TEXCOORD,debugBitmap);
     
-    NE_ModelSetMaterial(Scene->Model[0], Blahaj_Material);
-    NE_ModelSetCoord(Scene->Model[0],0,0,0);
+    NE_ModelSetMaterial(Scene->Model, Blahaj_Material);
+    NE_ModelSetCoord(Scene->Model,0,0,0);
     NE_LightSet(0, NE_White, -0.5, -0.5, -0.5);
 
 }
@@ -110,9 +100,9 @@ int main(int argc, char **argv)
     irqSet(IRQ_HBLANK, NE_HBLFunc);
 
     mmInitDefault("nitro:/soundbank.bin");
-    mmLoad(MOD_SPACE_DEBRIS);
+    mmLoad(MOD_JOINT_PEOPLE);
     soundEnable();
-    mmStart(MOD_SPACE_DEBRIS, MM_PLAY_LOOP);
+    //mmStart(MOD_JOINT_PEOPLE, MM_PLAY_LOOP);
 
 
     SceneData Scene = { 0 };

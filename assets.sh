@@ -14,6 +14,12 @@ python3 $OBJ2DL \
     --texture 256 256
 
 python3 $OBJ2DL \
-    --input maps/*.obj \
-    --output ntrfs/maps/*.bin \
+    --input assets/exports/ship.obj \
+    --output ntrfs/iron_lung.bin \
     --texture 256 256
+
+
+# python3 $OBJ2DL \
+#     --input maps/*.obj \
+#     --output ntrfs/maps/*.bin \
+#     --texture 256 256
