@@ -16,7 +16,7 @@ python3 $OBJ2DL \
 python3 $OBJ2DL \
     --input assets/exports/ship.obj \
     --output ntrfs/iron_lung.bin \
-    --texture 256 256
+    --texture 128 128
 
 
 # python3 $OBJ2DL \

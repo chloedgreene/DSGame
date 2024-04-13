@@ -20,6 +20,7 @@
 //Assets
 #include "soundbank.h"
 #include "blahaj.h"
+#include "ship.h"
 #ifdef CHLOE_DEBUG_ASK_BEFORE_CHANGING
 #include "debug.h"
 #endif
@@ -73,16 +74,17 @@ void Init3DScene(void *arg){
 
     NE_Material *Blahaj_Material = NE_MaterialCreate();
     NE_CameraSet(Scene->Camera,
-                  2, 1, 0,
-                  0, 0.5, 0,
+                  1, 0, 0,
+                  0, -0.25, 0,
                   0, 1, 0);
+    
 
     NE_ModelLoadStaticMeshFAT(Scene->Model, "iron_lung.bin");
-    NE_MaterialTexLoad(Blahaj_Material, NE_RGB5, 8, 8, NE_TEXGEN_TEXCOORD,debugBitmap);
+    NE_MaterialTexLoad(Blahaj_Material, NE_RGB5, 128, 128, NE_TEXGEN_TEXCOORD,shipBitmap);
     
     NE_ModelSetMaterial(Scene->Model, Blahaj_Material);
     NE_ModelSetCoord(Scene->Model,0,0,0);
-    NE_LightSet(0, NE_White, -0.5, -0.5, -0.5);
+    NE_LightSet(0, RGB15(31,22,22), -0.5, -0.5, -0.5);
 
 }
 
